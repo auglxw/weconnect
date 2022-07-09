@@ -1,5 +1,5 @@
 import logging
-
+import os
 from telegram import (
     CallbackQuery,
     InlineKeyboardButton,
@@ -26,6 +26,7 @@ from register import (
     register,
     receive_poll_answer,
 )
+from chat import SocketIO
 
 # Enable logging
 logging.basicConfig(
@@ -44,6 +45,14 @@ def main_menu_keyboard():
                 InlineKeyboardButton('Join', callback_data='join')]]
     return InlineKeyboardMarkup(keyboard)
 
+async def find(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await SocketIO.connect()
+    await SocketIO.beginChat("123")
+    await update.message.reply_text("Joining a room!")
+
+async def exit(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await SocketIO.disconnect()
+    await update.message.reply_text("Thanks for chatting!")
 
 async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("Use /quiz, /poll or /preview to test this bot.")
@@ -54,10 +63,11 @@ def main() -> None:
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("register", register))
     application.add_handler(CommandHandler("edit", register))
+    application.add_handler(CommandHandler("exit", exit))
     application.add_handler(CommandHandler("help", help_handler))
     application.add_handler(PollAnswerHandler(receive_poll_answer))
     application.add_handler(CallbackQueryHandler(register, "register"))
-    # application.add_handler(CallbackQueryHandler(print("find"), "find"))
+    application.add_handler(CallbackQueryHandler(find, "find"))
     # application.add_handler(CallbackQueryHandler(print("join"), "join"))
 
     application.run_polling()
