@@ -20,9 +20,12 @@ from telegram.ext import (
     filters,
 )
 
+
 async def register(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    questions_interest = ["Race", "Sexual Orientation", "Occupation", "Education", "Physical Capabilities"]
-    questions_shared = ["Race", "Sexual Orientation", "Occupation", "Education", "Physical Capabilities", "None"]
+    questions_interest = ["Race", "Sexual Orientation",
+                          "Occupation", "Education", "Physical Capabilities"]
+    questions_shared = ["Race", "Sexual Orientation",
+                        "Occupation", "Education", "Physical Capabilities", "None"]
     message = await context.bot.send_poll(
         update.effective_chat.id,
         "Select the following communities you are interested in.",
@@ -38,7 +41,7 @@ async def register(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         }
     }
     context.bot_data.update(payload)
-    
+
     message = await context.bot.send_poll(
         update.effective_chat.id,
         "Select the following communities you identify with.",
@@ -63,7 +66,7 @@ async def receive_poll_answer(update: Update, context: ContextTypes.DEFAULT_TYPE
         questions = answered_poll["questions"]
     except KeyError:
         return
-    
+
     # Upload selected options to database here
     selected_options = answer.option_ids
     answer_string = ""

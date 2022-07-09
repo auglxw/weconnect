@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("Hello", reply_markup=main_menu_keyboard()
-    )
+                                    )
 
 
 def main_menu_keyboard():
@@ -63,7 +63,8 @@ async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 def main() -> None:
     """Run bot."""
     # Create the Application and pass it your bot's token.
-    application = Application.builder().token("5474527930:AAFAFk88EYYIfAi9YQkgvdZe_5wqg-WBAFU").build()
+    application = Application.builder().token(
+        "5474527930:AAFAFk88EYYIfAi9YQkgvdZe_5wqg-WBAFU").build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("register", register))
     application.add_handler(CommandHandler("edit", register))
