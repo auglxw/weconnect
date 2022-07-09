@@ -88,17 +88,3 @@ async def receive_poll_answer(update: Update, context: ContextTypes.DEFAULT_TYPE
         answer_string,
         parse_mode=ParseMode.HTML,
     )
-
-
-async def receive_poll(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """On receiving polls, reply to it by a closed poll copying the received poll"""
-    actual_poll = update.effective_message.poll
-    # Only need to set the question and options, since all other parameters don't matter for
-    # a closed poll
-    await update.effective_message.reply_poll(
-        question=actual_poll.question,
-        options=[o.text for o in actual_poll.options],
-        # with is_closed true, the poll/quiz is immediately closed
-        is_closed=True,
-        reply_markup=ReplyKeyboardRemove(),
-    )
