@@ -21,17 +21,18 @@ from telegram.ext import (
 )
 
 async def register(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    questions = ["Race", "Sexual Orientation", "Occupation", "Education", "Physical Capabilities"]
+    questions_interest = ["Race", "Sexual Orientation", "Occupation", "Education", "Physical Capabilities"]
+    questions_shared = ["Race", "Sexual Orientation", "Occupation", "Education", "Physical Capabilities", "None"]
     message = await context.bot.send_poll(
         update.effective_chat.id,
         "Select the following communities you are interested in.",
-        questions,
+        questions_interest,
         is_anonymous=False,
         allows_multiple_answers=True,
     )
     payload = {
         message.poll.id: {
-            "questions": questions,
+            "questions": questions_interest,
             "message_id": message.message_id,
             "chat_id": update.effective_chat.id,
         }
@@ -41,13 +42,13 @@ async def register(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     message = await context.bot.send_poll(
         update.effective_chat.id,
         "Select the following communities you identify with.",
-        questions,
+        questions_shared,
         is_anonymous=False,
         allows_multiple_answers=True,
     )
     payload = {
         message.poll.id: {
-            "questions": questions,
+            "questions": questions_shared,
             "message_id": message.message_id,
             "chat_id": update.effective_chat.id,
         }
