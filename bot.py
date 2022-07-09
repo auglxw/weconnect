@@ -18,6 +18,7 @@ from telegram import (
     ReplyKeyboardMarkup,
     ReplyKeyboardRemove,
     Update,
+    User,
 )
 from telegram.constants import ParseMode
 from telegram.ext import (
@@ -35,6 +36,7 @@ from register import (
     receive_poll_answer,
     receive_poll,
 )
+from matchfunctions import find_match
 
 # Enable logging
 logging.basicConfig(
@@ -49,9 +51,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 def main_menu_keyboard():
+    # keyboard = [[InlineKeyboardButton('Register/ Edit', callback_data='register')],
+    #             [InlineKeyboardButton('Find', callback_data='find'),
+    #             InlineKeyboardButton('Join', callback_data='join')]]
+
     keyboard = [[InlineKeyboardButton('Register/ Edit', callback_data='register')],
-                [InlineKeyboardButton('Find', callback_data='find'),
-                InlineKeyboardButton('Join', callback_data='join')]]
+                [InlineKeyboardButton('Find Match', callback_data='find_match')]]
     return InlineKeyboardMarkup(keyboard)
 
 
@@ -75,6 +80,8 @@ def main() -> None:
     application.add_handler(CallbackQueryHandler(register, "register"))
     # application.add_handler(CallbackQueryHandler(print("find"), "find"))
     # application.add_handler(CallbackQueryHandler(print("join"), "join"))
+
+    application.add_handler(CommandHandler("find_match", find_match))
 
     # Run the bot until the user presses Ctrl-C
     application.run_polling()
