@@ -22,8 +22,12 @@ from telegram.ext import (
 
 from dbfunctions import (insert_user, can_edit_user, edit_user)
 
+from matchfunctions import find_match
+
 
 async def register(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    print("chat id: ", update.effective_chat.id)
+    print("user id: ", update.effective_user.id)
     questions_interest = ["Race", "Sexual Orientation",
                           "Occupation", "Education", "Physical Capabilities"]
     questions_share = ["Race", "Sexual Orientation",
@@ -74,6 +78,7 @@ async def receive_poll_answer(update: Update, context: ContextTypes.DEFAULT_TYPE
     # Upload selected options to database here
     selected_options = answer.option_ids
     answer_string = ""
+    user_id = update.effective_user.id
 
     # If interest:
 
@@ -82,13 +87,20 @@ async def receive_poll_answer(update: Update, context: ContextTypes.DEFAULT_TYPE
     else:
         if answered_poll["type"] == "share":
             print("inputting user: share")
-            # edit_user("share", selected_options, update.effective_user.id)
-            insert_user("share", selected_options, update.effective_user.id)
+            if can_edit_user(user_id):
+                edit_user("share", selected_options, user_id)
+            else:
+                insert_user("share", selected_options,
+                            user_id)
             answer_string = "You are open to sharing about:\n"
         elif answered_poll["type"] == "interest":
             print("inputting user: interest")
-            # edit_user("interest", selected_options, update.effective_user.id)
-            insert_user("interest", selected_options, update.effective_user.id)
+            if can_edit_user(user_id):
+                edit_user("interest", selected_options,
+                          user_id)
+            else:
+                insert_user("interest", selected_options,
+                            user_id)
             answer_string = "You are interested in learning more about:\n"
         for question_id in selected_options:
             if question_id != selected_options[-1]:

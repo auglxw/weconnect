@@ -36,7 +36,7 @@ from register import (
     receive_poll_answer,
     receive_poll,
 )
-from matchfunctions import find_match
+from matchfunctions import (find_match_handler, exit_search_handler)
 
 # Enable logging
 logging.basicConfig(
@@ -56,7 +56,7 @@ def main_menu_keyboard():
     #             InlineKeyboardButton('Join', callback_data='join')]]
 
     keyboard = [[InlineKeyboardButton('Register/ Edit', callback_data='register')],
-                [InlineKeyboardButton('Find Match', callback_data='find_match')]]
+                [InlineKeyboardButton('Find Match', callback_data='findmatch')]]
     return InlineKeyboardMarkup(keyboard)
 
 
@@ -81,7 +81,8 @@ def main() -> None:
     # application.add_handler(CallbackQueryHandler(print("find"), "find"))
     # application.add_handler(CallbackQueryHandler(print("join"), "join"))
 
-    application.add_handler(CommandHandler("find_match", find_match))
+    application.add_handler(CommandHandler("findmatch", find_match_handler))
+    application.add_handler(CommandHandler("stopsearch", exit_search_handler))
 
     # Run the bot until the user presses Ctrl-C
     application.run_polling()

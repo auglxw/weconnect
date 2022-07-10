@@ -12,11 +12,11 @@ def compatibilityCheck(userData, dbData):
     # user interested comms
     user_interested_comms = userData['interested_comms_id']
     user_identified_comms = userData['my_comms_id']  # user identified comms
-    best_score = 0  # var to keep track of the best score
+    best_score = -1  # var to keep track of the best score
     best_match_id = 0  # var to keep track of the user with the best score
-    desired_match_type = 'sharer' if userData['status'] == 'learner' else 'learner'
+    desired_match_type = 'sharer' if userData['type'] == 'learner' else 'learner'
     for person in dbData:
-        if person['status'] != desired_match_type or person['match_status'] != 'waiting':
+        if person['type'] != desired_match_type or person['status'] != 'waiting':
             continue
         identified_score = 0
         for comm in user_identified_comms:
@@ -32,8 +32,8 @@ def compatibilityCheck(userData, dbData):
         # best match thus far, update details
         elif (identified_score + interested_score) > best_score:
             best_score = identified_score + interested_score
-            best_match_id = person['uuid']
-    if best_match_id == 0:
+            best_match_id = person['user_id']
+    if best_score == -1:
         return None
 
     return best_match_id
