@@ -6,6 +6,7 @@ from telegram import (
     InlineKeyboardMarkup,
     KeyboardButton,
     KeyboardButtonPollType,
+    MenuButtonDefault,
     Poll,
     ReplyKeyboardMarkup,
     ReplyKeyboardRemove,
@@ -26,7 +27,6 @@ from register import (
     register,
     receive_poll_answer,
 )
-from chat import SocketIO
 
 # Enable logging
 logging.basicConfig(
@@ -34,8 +34,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    logger.info("%s started the bot", update.effective_chat.id)
     await update.message.reply_text("Hello", reply_markup=main_menu_keyboard())
     
 
@@ -46,20 +46,21 @@ def main_menu_keyboard():
     return InlineKeyboardMarkup(keyboard)
 
 async def find(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await context.bot.send_message(update.effective_chat.id, "Joining a room!")
-    await SocketIO.connect()
-    await SocketIO.beginChat("123")
+    await context.bot.send_message(update.effective_chat.id, "You are now chatting.")
+    # create the 'room' id aka save the chat id of the other user
 
 async def sendMsg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    logger.info(update.message.text)
-    await SocketIO.sendMessage(update.message.text, "123", update.effective_chat.id)
+    # if there is a 'room' id
+    # else do nothing
+    logger.info("%s sent %s", update.effective_chat.id, update.message.text)
+    await context.bot.send_message("428599836", update.message.text)
 
 async def exit(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await SocketIO.disconnect()
     await update.message.reply_text("Thanks for chatting!")
+    # clear 'room' id from database
 
 async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("Use /quiz, /poll or /preview to test this bot.")
+    await update.message.reply_text("Need some help?\n/register to create your profile\n/edit to edit your profile\n/find to find a match\n/help if you need my help again")
 
 
 def main() -> None:
