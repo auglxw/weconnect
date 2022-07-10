@@ -29,6 +29,7 @@ from register import (
     receive_poll_answer,
 )
 from matchfunctions import (find_match_handler, exit_search_handler)
+from dbfunctions import get_user
 
 # Enable logging
 logging.basicConfig(
@@ -42,30 +43,20 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
 
 def main_menu_keyboard():
-    # keyboard = [[InlineKeyboardButton('Register/ Edit', callback_data='register')],
-    #             [InlineKeyboardButton('Find', callback_data='find'),
-    #             InlineKeyboardButton('Join', callback_data='join')]]
-
     keyboard = [[InlineKeyboardButton('Register/ Edit', callback_data='register')],
                 [InlineKeyboardButton('Find Match', callback_data='findmatch')]]
     return InlineKeyboardMarkup(keyboard)
 
-async def find(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await context.bot.send_message(update.effective_chat.id, "You are now chatting.")
-    # create the 'room' id aka save the chat id of the other user
-
 async def sendMsg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    # if there is a 'room' id
-    # else do nothing
+    user_profile = get_user(update.effective_user.id)
     logger.info("%s sent %s", update.effective_chat.id, update.message.text)
-    await context.bot.send_message("428599836", update.message.text)
+    await context.bot.send_message(user_profile["room_id"], update.message.text)
 
 async def exit(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("Thanks for chatting!")
-    # clear 'room' id from database
 
 async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("Need some help?\n/register to create your profile\n/edit to edit your profile\n/find to find a match\n/help if you need my help again")
+    await update.message.reply_text("Need some help?\n/register to create your profile\n/find to find a match\n/help if you need my help again")
 
 
 def main() -> None:
@@ -73,14 +64,13 @@ def main() -> None:
     
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("register", register))
-    application.add_handler(CommandHandler("edit", register))
-    application.add_handler(CommandHandler("find", find))
+    application.add_handler(CommandHandler("find", find_match_handler))
     application.add_handler(CommandHandler("exit", exit))
     application.add_handler(CommandHandler("help", help_handler))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, sendMsg))
     application.add_handler(PollAnswerHandler(receive_poll_answer))
     application.add_handler(CallbackQueryHandler(register, "register"))
-    application.add_handler(CallbackQueryHandler(find, "find"))
+    application.add_handler(CallbackQueryHandler(find_match_handler, "findmatch"))
     # application.add_handler(CallbackQueryHandler(print("join"), "join"))
 
     application.add_handler(CommandHandler("findmatch", find_match_handler))
