@@ -20,9 +20,18 @@ from telegram.ext import (
     filters,
 )
 
+from dbfunctions import (insert_user, can_edit_user, edit_user)
+
+from matchfunctions import find_match
+
+
 async def register(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    questions_interest = ["Race", "Sexual Orientation", "Occupation", "Education", "Physical Capabilities"]
-    questions_share = ["Race", "Sexual Orientation", "Occupation", "Education", "Physical Capabilities", "None"]
+    print("chat id: ", update.effective_chat.id)
+    print("user id: ", update.effective_user.id)
+    questions_interest = ["Race", "Sexual Orientation",
+                          "Occupation", "Education", "Physical Capabilities"]
+    questions_share = ["Race", "Sexual Orientation",
+                       "Occupation", "Education", "Physical Capabilities", "None"]
     message = await context.bot.send_poll(
         update.effective_chat.id,
         "Select the following communities you are interested in.",
@@ -39,7 +48,7 @@ async def register(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         }
     }
     context.bot_data.update(payload)
-    
+
     message = await context.bot.send_poll(
         update.effective_chat.id,
         "Select the following communities you identify with.",
@@ -65,16 +74,33 @@ async def receive_poll_answer(update: Update, context: ContextTypes.DEFAULT_TYPE
         questions = answered_poll["questions"]
     except KeyError:
         return
-    
+
     # Upload selected options to database here
     selected_options = answer.option_ids
     answer_string = ""
+    user_id = update.effective_user.id
+
+    # If interest:
+
     if answered_poll["type"] == "share" and 5 in selected_options:
         answer_string = "That's alright! We are all here to learn :)"
     else:
         if answered_poll["type"] == "share":
+            print("inputting user: share")
+            if can_edit_user(user_id):
+                edit_user("share", selected_options, user_id)
+            else:
+                insert_user("share", selected_options,
+                            user_id)
             answer_string = "You are open to sharing about:\n"
         elif answered_poll["type"] == "interest":
+            print("inputting user: interest")
+            if can_edit_user(user_id):
+                edit_user("interest", selected_options,
+                          user_id)
+            else:
+                insert_user("interest", selected_options,
+                            user_id)
             answer_string = "You are interested in learning more about:\n"
         for question_id in selected_options:
             if question_id != selected_options[-1]:

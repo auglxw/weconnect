@@ -11,6 +11,7 @@ from telegram import (
     ReplyKeyboardMarkup,
     ReplyKeyboardRemove,
     Update,
+    User,
 )
 from telegram.constants import ParseMode
 from telegram.ext import (
@@ -27,6 +28,7 @@ from register import (
     register,
     receive_poll_answer,
 )
+from matchfunctions import (find_match_handler, exit_search_handler)
 
 # Enable logging
 logging.basicConfig(
@@ -40,9 +42,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
 
 def main_menu_keyboard():
+    # keyboard = [[InlineKeyboardButton('Register/ Edit', callback_data='register')],
+    #             [InlineKeyboardButton('Find', callback_data='find'),
+    #             InlineKeyboardButton('Join', callback_data='join')]]
+
     keyboard = [[InlineKeyboardButton('Register/ Edit', callback_data='register')],
-                [InlineKeyboardButton('Find', callback_data='find'),
-                InlineKeyboardButton('Join', callback_data='join')]]
+                [InlineKeyboardButton('Find Match', callback_data='findmatch')]]
     return InlineKeyboardMarkup(keyboard)
 
 async def find(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -65,6 +70,7 @@ async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
 def main() -> None:
     application = Application.builder().token("5474527930:AAFAFk88EYYIfAi9YQkgvdZe_5wqg-WBAFU").build()
+    
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("register", register))
     application.add_handler(CommandHandler("edit", register))
@@ -77,6 +83,10 @@ def main() -> None:
     application.add_handler(CallbackQueryHandler(find, "find"))
     # application.add_handler(CallbackQueryHandler(print("join"), "join"))
 
+    application.add_handler(CommandHandler("findmatch", find_match_handler))
+    application.add_handler(CommandHandler("stopsearch", exit_search_handler))
+
+    # Run the bot until the user presses Ctrl-C
     application.run_polling()
 
 
