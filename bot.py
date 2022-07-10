@@ -85,7 +85,13 @@ def main() -> None:
 
     application.add_handler(CommandHandler("findmatch", find_match_handler))
     application.add_handler(CommandHandler("stopsearch", exit_search_handler))
-
+    
+    application.run_webhook(listen="0.0.0.0",
+                      port=int(os.environ.get('PORT', 5000)),
+                      url_path="5474527930:AAFAFk88EYYIfAi9YQkgvdZe_5wqg-WBAFU",
+                      webhook_url=  "https://lifehack22.herokuapp.com/5474527930:AAFAFk88EYYIfAi9YQkgvdZe_5wqg-WBAFU"
+                      )
+    
     # Run the bot until the user presses Ctrl-C
     application.run_polling()
 
