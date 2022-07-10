@@ -1,6 +1,6 @@
 aiohttp
 telegram
-python-telegram-bot=20.0a2
+python-telegram-bot==20.0a2
 python-socketio
 asyncio
 dnspython
