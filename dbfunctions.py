@@ -122,8 +122,8 @@ def put_room(user_id, compatible_user_id):
                           "$set": {"status": "meeting"}})
 
     # Update room_id
-    room_id_dummy = "1234"
     collection.update_one({"user_id": user_id}, {
-                          "$set": {"room_id": room_id_dummy}})
+                          "$set": {"room_id": compatible_user_id}})
     collection.update_one({"user_id": compatible_user_id}, {
-        "$set": {"room_id": room_id_dummy}})
+        "$set": {"room_id": user_id}})
+
