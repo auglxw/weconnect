@@ -26,8 +26,7 @@ async def send_message(sid, data):
 
 @sio.event
 async def receive_message(sid, data):
-    pass
-    # application.bot.send_message(data["chat_id"], data["msg"])
+    application.bot.send_message(data["chat_id"], data["msg"])
 
 @sio.event
 async def disconnect(sid):
